@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Function wrapping benchmark</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+button {
+  font-size: 18px;
+  padding: 10px;
+  margin: 5px;
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.1/require.min.js"></script>
+</head>
+<body>
+<h1>Function wrapping benchmark</h1>
+<div>
+<button type=button onclick="loadScript('nowrap.js', 1)">Run unwrapped version</button>
+</div>
+<div>
+<button type=button onclick="loadScript('wrapped.js', 1)">Run wrapped version</button>
+</div>
+<div>
+<button type=button onclick="loadScript('nowrap.js', 25)">Run unwrapped version - median of 25</button>
+</div>
+<div>
+<button type=button onclick="loadScript('wrapped.js', 25)">Run wrapped version - median of 25</button>
+</div>
+<div>
+<button type=button onclick="loadScript('nowrap.js', 99)">Run unwrapped version - median of 99</button>
+</div>
+<div>
+<button type=button onclick="loadScript('wrapped.js', 99)">Run wrapped version - median of 99</button>
+</div>
+<div>
+<pre id=display></pre>
+<script>
+function loadScript(src, num) {
+  src += '?q=' + Math.random()
+  var times = []
+  window.__onDone = function (time) {
+    times.push(time)
+    if (--num > 0) {
+      load();
+    } else {
+        console.log(times);
+      var median = times.sort(function (left, right) {
+        return left < right ? -1 : 1
+      })[~~(times.length / 2)];
+      display.innerHTML += median + 'ms\n'
+    }
+  }
+  function load() {
+    var script = document.createElement('script')
+    script.src = src
+    document.body.appendChild(script)
+  }
+  load()
+}
+
+function runNoWrap() { loadScript('nowrap.js', 1) }
+function runNoWrap25() { loadScript('nowrap.js', 1) }
+function runWrapped() { loadScript('wrapped.js', 1) }
+function runWrapped25() { loadScript('wrapped.js', 1) }
+</script>
+</body>
+</html>
